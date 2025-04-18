@@ -9,8 +9,8 @@ import Title from "@/components/custom/title";
 import TrackItem from "@/components/custom/track-item";
 import { Button } from "@/components/ui/button";
 import { PATHS } from "@/lib/constants";
-import { useSpotifyStore } from "@/lib/stores/spotify";
 import useSpotifyService from "@/lib/hooks/use-spotify-service";
+import { useSpotifyStore } from "@/lib/stores/spotify";
 import { getTopGenres } from "@/lib/utils";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -58,14 +58,19 @@ export default function Home() {
     }
   }, [profile])
 
+  useEffect(() => {
+    const img = new Image();
+    img.src = '/logo-white.png';
+  }, []);
+
   return (
     <Loader loading={isLoading || loading}>
       <div className="p-5 max-md:pt-10">
         <Logo />
-        <div className="text-xl font-semibold mb-4">
+        <div className="text-xl font-semibold mb-4 max-lg:text-center">
           Welcome {profile?.display_name},
           {topGenres ? (
-            <> you seem to be in love with the <span className="text-primary">#{topGenres[0]}</span> genre.</>
+            <> you seem to have a thing for <span className="text-primary">#{topGenres[0]}</span> songs.</>
           ) : null}
         </div>
         <div className="grid grid-cols-12 gap-y-5 lg:gap-10 mb-10">
@@ -100,24 +105,28 @@ export default function Home() {
 
         {/* genres */}
         <Title text="Genres" />
-        <div className="flex gap-4 flex-wrap mb-4">
-          {topGenres?.length ? (
-            <>
-              {topGenres.map(v => (
-                <Pill key={v} text={v} />
-              ))}
-            </>
-          ) : null}
+        <div className="flex max-lg:flex-col lg:gap-10 items-center">
+          <div className="flex gap-4 flex-wrap mb-4">
+            {topGenres?.length ? (
+              <>
+                {topGenres.map(v => (
+                  <Pill key={v} text={v} />
+                ))}
+              </>
+            ) : null}
+          </div>
+          <div className="flex justify-center max-lg:w-full lg:justify-end mt-10">
+            <Button
+              variant={'spotify'}
+              className="max-lg:w-full"
+              loading={signingOut}
+              onClick={handleSignOut}>
+              Sign out
+            </Button>
+          </div>
         </div>
-        <div className="flex justify-end">
-          <Button
-            variant={'spotify'}
-            className="!h-12"
-            loading={signingOut}
-            onClick={handleSignOut}>
-            Sign out
-          </Button>
-        </div>
+        {/* <hr className='mt-5  border-background' /> 
+        <Footer /> */}
       </div>
     </Loader>
   );

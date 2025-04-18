@@ -1,5 +1,6 @@
+import { redirect } from "next/navigation";
 import toast from "react-hot-toast";
-import { clientId, redirectUri, scope } from "../constants";
+import { clientId, PATHS, redirectUri, scope } from "../constants";
 import { useSpotifyStore } from "../stores/spotify";
 import { generateCodeChallenge, generateCodeVerifier } from "../utils";
 
@@ -33,7 +34,6 @@ export default function useSpotifyService() {
   }
 
   const handleAuthCallback = async (code: string) => {
-
     setLoading(true);
     try {
       const token = await getAccessToken(code);
@@ -100,6 +100,7 @@ export default function useSpotifyService() {
     });
 
     // if (!res.ok) throw new Error("Failed to fetch top artists");
+    if (res.status === 401) redirect(PATHS.SIGN_IN)
     if (!res.ok) return null;
     return await res.json();
   }
@@ -110,6 +111,7 @@ export default function useSpotifyService() {
     });
 
     // if (!res.ok) throw new Error("Failed to fetch top tracks");
+    if (res.status === 401) redirect(PATHS.SIGN_IN)
     if (!res.ok) return null;
     return await res.json();
   }

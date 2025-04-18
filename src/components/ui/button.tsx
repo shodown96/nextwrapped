@@ -22,7 +22,7 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        spotify:"font-medium bg-primary text-white rounded text-black font-bold text-lg rounded-full hover:bg-primary-hover transition"
+        spotify:"!h-12 w-60 font-medium bg-primary text-white rounded text-black font-bold text-lg rounded-full hover:bg-primary-hover transition"
       },
       size: {
         default: "h-14 px-12 py-4",

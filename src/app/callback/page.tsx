@@ -25,25 +25,26 @@ export default function CallbackPage() {
                 await handleAuthCallback(code)
                 toast.dismiss(toastId)
             } else {
-                redirect(PATHS.LANDING)
+                redirect(PATHS.SIGN_IN)
             }
         }
         getCallback()
     }, [code])
 
-    useEffect(()=>{
-        if(profile){
+    useEffect(() => {
+        if (profile) {
             redirect(PATHS.LANDING)
         }
-    },[profile])
-    useEffect(()=>{
-        if(error === "access_denied"){
+    }, [profile])
+
+    useEffect(() => {
+        if (error === "access_denied") {
             toast.error("Permission denied")
             redirect(PATHS.SIGN_IN)
-        } else if(error){
+        } else if (error) {
             toast.error("Unable to process request, please try again later.")
         }
-    },[error])
+    }, [error])
 
     return (
         <Loader loading />
