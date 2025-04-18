@@ -61,7 +61,8 @@ body{
   --primary-foreground: #3be477;
   --primary-hover: #3ce478;
   /* --primary-press: #1abc54; */
-  --secondary: oklch(0.97 0 0);
+  --secondary: #b3b3b3;
+  /* --secondary: oklch(0.97 0 0); */
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);

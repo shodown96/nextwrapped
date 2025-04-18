@@ -20,11 +20,15 @@ export default function CallbackPage() {
 
     useEffect(() => {
         const getCallback = async () => {
-            if (code) {
-                const toastId = toast.loading("Fetching profile")
-                await handleAuthCallback(code)
-                toast.dismiss(toastId)
-            } else {
+            try {
+                if (code) {
+                    const toastId = toast.loading("Fetching profile")
+                    await handleAuthCallback(code)
+                    toast.dismiss(toastId)
+                } else {
+                    redirect(PATHS.SIGN_IN)
+                }
+            } catch (error) {
                 redirect(PATHS.SIGN_IN)
             }
         }
