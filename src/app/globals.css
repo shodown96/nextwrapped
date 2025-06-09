@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "./fonts/fonts.css";
+@plugin "@tailwindcss/typography";
+
 body{
   font-family: "Spotify Mix" !important;
   font-size: 15px;
@@ -141,4 +143,8 @@ body{
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.eula {
+  color: #fff !important;
 }

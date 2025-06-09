@@ -1,45 +1,41 @@
 "use client"
 
-import Loader from "@/components/custom/loader";
+import TextLoader from "@/components/custom/text-loader";
 import { PATHS } from "@/lib/constants";
-import { useSpotifyStore } from "@/lib/stores/spotify";
-import useSpotifyService from "@/lib/hooks/use-spotify-service";
-import { redirect, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useSpotify } from "@/lib/hooks/use-spotify";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useRef } from "react";
 import toast from "react-hot-toast";
 
 export default function CallbackPage() {
-    const { handleAuthCallback } = useSpotifyService()
+    const { handleAuthCallback, fetchProfile } = useSpotify();
     const searchParams = useSearchParams()
-    const code = searchParams.get("code")
     const error = searchParams.get("error")
-
-    const {
-        profile,
-    } = useSpotifyStore();
+    const hasRun = useRef(false)
+    const router = useRouter()
 
     useEffect(() => {
+        if (hasRun.current) {
+            return
+        }
+        hasRun.current = true
         const getCallback = async () => {
+            const code = searchParams.get("code")
+            if (!code) {
+                toast.error("No authorization code provided");
+                return;
+            }
             try {
-                if (code) {
-                    const toastId = toast.loading("Fetching profile")
-                    await handleAuthCallback(code)
-                    toast.dismiss(toastId)
-                } else {
-                    redirect(PATHS.SIGN_IN)
-                }
+                const token = await handleAuthCallback(code);
+                await fetchProfile(token);
+                router.replace(PATHS.LANDING)
             } catch (error) {
-                redirect(PATHS.SIGN_IN)
+                console.log(error)
+                // redirect(PATHS.SIGN_IN)
             }
         }
         getCallback()
-    }, [code])
-
-    useEffect(() => {
-        if (profile) {
-            redirect(PATHS.LANDING)
-        }
-    }, [profile])
+    }, [])
 
     useEffect(() => {
         if (error === "access_denied") {
@@ -51,6 +47,6 @@ export default function CallbackPage() {
     }, [error])
 
     return (
-        <Loader loading />
+        <TextLoader loading className="h-screen" text="Authenticating with Spotify..." />
     )
 }

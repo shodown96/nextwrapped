@@ -1,38 +1,37 @@
-import { create } from 'zustand';
-import { createJSONStorage, persist } from 'zustand/middleware';
+// stores/spotify.ts
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
-interface State {
-    accessToken: string | null;
-    verifier: string | null;
-    profile: UserProfile | null;
-    isLoading: boolean;
+interface SpotifyState {
+  accessToken: string | null;
+  tokenExpiry: number | null;
+  profile: UserProfile | null;
+  setAccessToken: (token: string, expiresIn: number) => void;
+  setProfile: (profile: UserProfile) => void;
+  resetStore: () => void;
 }
 
-interface Actions {
-    setAccessToken: (accessToken: string) => void;
-    setVerifier: (verifier: string) => void;
-    setProfile: (profile: UserProfile) => void;
-    setLoading: (loading: boolean) => void;
-    reset: () => void;
-}
-
-export const useSpotifyStore = create(
-    persist<State & Actions>(
-        (set, get) => ({
-            accessToken: null,
-            verifier: null,
-            profile: null,
-            isLoading: false,
-            setAccessToken: (accessToken) => set({ accessToken }),
-            setVerifier: (verifier) => set({ verifier }),
-            setProfile: (profile) => set({ profile }),
-            setLoading: (loading) => set({ isLoading: loading }),
-            reset: () => set({ accessToken: null, profile: null, isLoading: false }),
-
-        }),
-        {
-            name: 'spotify-storage',
-            skipHydration: true, // Requires the useStoreHydration usage
-            storage: createJSONStorage(() => localStorage),
-        }
-    ))
+export const useSpotifyStore = create<SpotifyState>()(
+  persist(
+    (set) => ({
+      accessToken: null,
+      tokenExpiry: null,
+      profile: null,
+      setAccessToken: (token, expiresIn) => {
+        const expiry = Date.now() + expiresIn * 1000;
+        set({ accessToken: token, tokenExpiry: expiry });
+      },
+      setProfile: (profile) => set({ profile }),
+      resetStore: () =>
+        set({ accessToken: null, tokenExpiry: null, profile: null }),
+    }),
+    {
+      name: "spotify-storage", // 🔐 localStorage key
+      partialize: (state) => ({
+        accessToken: state.accessToken,
+        tokenExpiry: state.tokenExpiry,
+        profile: state.profile,
+      }),
+    }
+  )
+);
